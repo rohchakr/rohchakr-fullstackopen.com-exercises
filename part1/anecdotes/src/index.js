@@ -3,26 +3,41 @@ import ReactDOM from 'react-dom'
 
 const Button = ({onClick, text}) => <button onClick={onClick}>{text}</button>
 
+const Anecdote = ({heading, text, votes}) => (
+  <>
+  <h1>{heading}</h1>
+  <p>{text}<br />has {votes} votes<br /></p>
+  </>
+)
+
 const App = (props) => {
   const [selected, setSelected] = useState(0)
   const [vote, setVote] = useState({})
+  const [mostVoted, setMostVoted] = useState(0)
 
   const getRandomInt = (max) => (Math.floor(Math.random() * Math.floor(max)))
-  const getVote = () => {
-    if (vote[selected] === undefined) {
-      vote[selected] = 0
+  const getVote = (index) => {
+    if (vote[index] === undefined) {
+      vote[index] = 0
     }
-    return vote[selected]
+    return vote[index]
+  }
+  const incrementVote = () => () => {
+    // console.log(vote[selected])
+    setVote({...vote, [selected]: vote[selected] + 1})
+    // console.log(vote[selected])
+    // at this point vote[selected] is still not incremented, both console.log fetche the same value
+    if (vote[selected] + 1 > vote[mostVoted]) {
+      setMostVoted(selected)
+    }
   }
 
   return (
     <div>
-      {props.anecdotes[selected]}
-      <br />
-      has {getVote()} votes
-      <br />
-      <Button onClick={() => setVote({...vote, [selected]: vote[selected] + 1})} text='vote' />
+      <Anecdote heading='Anecdote of the day' text={props.anecdotes[selected]} votes={getVote(selected)} />
+      <Button onClick={incrementVote()} text='vote' />
       <Button onClick={() => setSelected(getRandomInt(props.anecdotes.length))} text='next anecdote' />
+      <Anecdote heading='Anecdote with most votes' text={props.anecdotes[mostVoted]} votes={getVote(mostVoted)} />
     </div>
   )
 }
