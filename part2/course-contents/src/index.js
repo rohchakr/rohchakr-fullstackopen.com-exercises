@@ -9,15 +9,20 @@ const Content = ({parts}) => (
   parts.map(p => <Part key={p.id} name={p.name} exercises={p.exercises} />)
 )
 
-// const Total = ({parts}) => (
-//   <p>Number of exercises {parts[0].exercises + parts[1].exercises + parts[2].exercises}</p>
-// )
+const Total = ({parts}) => (
+  <p>
+    Number of exercises {
+      parts[0].exercises + parts[1].exercises + parts[2].exercises + parts[3].exercises
+    }
+  </p>
+)
 
 const Course = ({ course }) => (
-  <>
+  <div>
   <Header course={course.name} />
   <Content parts={course.parts} />
-  </>
+  <Total parts={course.parts} />
+  </div>
 )
 
 const App = () => {
@@ -39,15 +44,17 @@ const App = () => {
         name: 'State of a component',
         exercises: 14,
         id: 3
+      },
+      {
+        name: 'Redux',
+        exercises: 11,
+        id: 4
       }
     ]
   }
 
   return (
-    <div>
       <Course course={course} />
-      {/* <Total parts={course.parts} /> */}
-    </div>
   )
 }
 
