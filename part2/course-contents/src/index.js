@@ -1,32 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-
-const Header = ({course}) => <h1>{course}</h1>
-
-const Part = ({name, exercises}) => <p>{name} {exercises}</p>
-
-const Content = ({parts}) => (
-  parts.map(p => <Part key={p.id} name={p.name} exercises={p.exercises} />)
-)
-
-const Total = ({parts}) => (
-  <p>
-  <strong>  
-    Total of {
-      // parts[0].exercises + parts[1].exercises + parts[2].exercises + parts[3].exercises
-      parts.map(p => p.exercises).reduce((acc, curr) => acc + curr)
-    } exercises
-  </strong>
-  </p>
-)
-
-const Course = ({ course }) => (
-  <div>
-  <Header course={course.name} />
-  <Content parts={course.parts} />
-  <Total parts={course.parts} />
-  </div>
-)
+import Course from './components/Course'
 
 const App = () => {
   
