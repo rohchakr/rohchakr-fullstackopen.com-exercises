@@ -7,13 +7,13 @@ const Filter = ({ value, onChange }) => (
   </div>
 )
 
-const Countries = ({ data, filterString }) => {
+const Countries = ({ data, filterString, expandCountry }) => {
   const TOO_MANY_MATCHES_WARNING = `Too many matches, specify another filter`
   const INITIAL_FILTER_INFORMATION = `Enter filter for country names above to get matching countries' data`
   const NO_MATCHES_WARNING = `No matches found, specify another filter`
   let content = ''
 
-  if (filterString === '') {
+  if (filterString === '' && data.length !== 1) {
     content = INITIAL_FILTER_INFORMATION
   } else if (data.length > 10) {
     content = TOO_MANY_MATCHES_WARNING
@@ -22,7 +22,7 @@ const Countries = ({ data, filterString }) => {
   } else if (data.length === 1) {
     content = <SingleCountry country={data[0]} />
   } else {
-    content = data.map(c => <Country key={c.name} name={c.name} />)
+    content = data.map(c => <Country key={c.name} name={c.name} expand={expandCountry} />)
   }
 
   return (
@@ -32,8 +32,8 @@ const Countries = ({ data, filterString }) => {
   )
 }
 
-const Country = ({ name }) => (
-  <div>{name}</div>
+const Country = ({ name, expand }) => (
+  <div>{name} <button name={name} onClick={expand}>show</button></div>
 )
 
 const SingleCountry = ({ country }) => (
@@ -70,10 +70,14 @@ const App = () => {
     ))
   }
 
+  const showSingleCountry = (event) => {
+    setFilteredCountries(filteredCountries.filter(c => c.name === event.target.name))
+  }
+
   return (
     <div>
       <Filter value={filterName} onChange={handleFilterNameChange} />
-      <Countries data={filteredCountries} filterString={filterName} />
+      <Countries data={filteredCountries} filterString={filterName} expandCountry={showSingleCountry} />
     </div>
   )
 }
