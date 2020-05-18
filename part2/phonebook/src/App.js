@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import axios from 'axios'
+import personsService from './services/persons'
 
 const Filter = ({ value, onChange }) => (
   <div>
@@ -40,11 +40,11 @@ const App = () => {
   const NAME_EXISTS_WARNING = `${newName} is already added to phonebook`
 
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        setPersons(response.data)
-        setFilteredPersons(response.data)
+    personsService
+      .getPersons()
+      .then(d => {
+        setPersons(d)
+        setFilteredPersons(d)
       })
   }, [])
 
@@ -55,13 +55,13 @@ const App = () => {
       alert(NAME_EXISTS_WARNING)
     } else {
       const newPerson = {name: newName, number: newNumber}
-      axios
-        .post('http://localhost:3001/persons', newPerson)
-        .then(response => {
-          setPersons(persons.concat(response.data))
+      personsService
+        .addPerson(newPerson)
+        .then(d => {
+          setPersons(persons.concat(d))
           // reset filter
           setFilterName('')
-          setFilteredPersons(persons.concat(response.data))
+          setFilteredPersons(persons.concat(d))
         })
     }
 
