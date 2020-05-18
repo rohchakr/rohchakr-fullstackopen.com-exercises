@@ -1,6 +1,20 @@
 import React, { useState, useEffect } from 'react'
 import personsService from './services/persons'
 
+const TIMEOUT_FREQ = 5000 // 5 sec 
+
+const Notification = ({ message, type }) => {
+  if (message === null) {
+    return null
+  }
+
+  return (
+    <div className={type}>
+      {message}
+    </div>
+  )
+}
+
 const Filter = ({ value, onChange }) => (
   <div>
         filter by name <input value={value} onChange={onChange} />
@@ -37,6 +51,8 @@ const App = () => {
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber ] = useState('')
   const [ filterName, setFilterName ] = useState('')
+  const [ message, setMessage ] = useState(null)
+  const [ notificationType, setNotificationType ] = useState('default')
   const UPDATE_NUMBER_WARNING = `${newName} is already added to phonebook, replace the old number with a new one?`
 
   useEffect(() => {
@@ -49,6 +65,7 @@ const App = () => {
   }, [])
 
   const addPerson = (event) => {
+    const ADD_PERSON_MSG = `Added ${newName}`
     event.preventDefault()
 
     if (persons.map(p => p.name).includes(newName)) {
@@ -66,6 +83,9 @@ const App = () => {
           setFilteredPersons(persons.concat(d))
           setNewName('')
           setNewNumber('')
+          setMessage(ADD_PERSON_MSG)
+          setNotificationType('default')
+          setTimeout(() => {setMessage(null)}, TIMEOUT_FREQ)
         })
     }
   }
@@ -74,6 +94,7 @@ const App = () => {
     const person = persons.filter(p => p.name === newName)[0]
     const pId = person.id
     const personData = { ...person, number : newNumber }
+    const UPDATE_PERSON_MSG = `Updated number of ${person.name}`
 
     personsService
       .updatePerson(pId, personData)
@@ -86,6 +107,9 @@ const App = () => {
         setFilteredPersons(updatedPersons)
         setNewName('')
         setNewNumber('')
+        setMessage(UPDATE_PERSON_MSG)
+        setNotificationType('default')
+        setTimeout(() => {setMessage(null)}, TIMEOUT_FREQ)
       })
   }
 
@@ -107,6 +131,7 @@ const App = () => {
   const handleDeletePerson = (event) => {
     const personName = event.target.name
     const DELETE_WARNING = `Delete ${personName} ?`
+    const DELETE_PERSON_MSG = `Deleted ${personName}`
 
     if (window.confirm(DELETE_WARNING)) {
       personsService
@@ -114,6 +139,9 @@ const App = () => {
         .then(() => {
           setPersons(persons.filter(p => p.name !== personName))
           setFilteredPersons(filteredPersons.filter(p => p.name !== personName))
+          setMessage(DELETE_PERSON_MSG)
+          setNotificationType('default')
+          setTimeout(() => {setMessage(null)}, TIMEOUT_FREQ)
         })
     }
   }
@@ -121,6 +149,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={message} type={notificationType} />
       <Filter value={filterName} onChange={handleFilterNameChange} />
       <h3>Add New</h3>
       <PersonForm 
