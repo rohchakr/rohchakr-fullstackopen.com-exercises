@@ -37,7 +37,7 @@ const App = () => {
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber ] = useState('')
   const [ filterName, setFilterName ] = useState('')
-  const NAME_EXISTS_WARNING = `${newName} is already added to phonebook`
+  const UPDATE_NUMBER_WARNING = `${newName} is already added to phonebook, replace the old number with a new one?`
 
   useEffect(() => {
     personsService
@@ -52,7 +52,9 @@ const App = () => {
     event.preventDefault()
 
     if (persons.map(p => p.name).includes(newName)) {
-      alert(NAME_EXISTS_WARNING)
+      if(window.confirm(UPDATE_NUMBER_WARNING)) {
+        updatePerson()
+      }
     } else {
       const newPerson = {name: newName, number: newNumber}
       personsService
@@ -62,11 +64,29 @@ const App = () => {
           // reset filter
           setFilterName('')
           setFilteredPersons(persons.concat(d))
+          setNewName('')
+          setNewNumber('')
         })
     }
+  }
 
-    setNewName('')
-    setNewNumber('')
+  const updatePerson = () => {
+    const person = persons.filter(p => p.name === newName)[0]
+    const pId = person.id
+    const personData = { ...person, number : newNumber }
+
+    personsService
+      .updatePerson(pId, personData)
+      .then(d => {
+        const insertPosition = persons.findIndex(p => p.id === pId)
+        const updatedPersons = persons.slice(0,insertPosition).concat(d).concat(persons.slice(insertPosition + 1))
+        setPersons(updatedPersons)
+        // reset filter
+        setFilterName('')
+        setFilteredPersons(updatedPersons)
+        setNewName('')
+        setNewNumber('')
+      })
   }
 
   const handleNameChange = (event) => {

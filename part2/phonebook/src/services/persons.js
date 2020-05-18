@@ -8,4 +8,6 @@ const addPerson = person => axios.post(baseUrl, person).then(response => respons
 
 const deletePerson = personId => axios.delete(`${baseUrl}/${personId}`)
 
-export default { getPersons, addPerson, deletePerson }
+const updatePerson = (personId, personData) => axios.put(`${baseUrl}/${personId}`, personData).then(response => response.data)
+
+export default { getPersons, addPerson, deletePerson, updatePerson }
