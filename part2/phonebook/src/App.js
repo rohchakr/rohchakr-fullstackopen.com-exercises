@@ -95,6 +95,7 @@ const App = () => {
     const pId = person.id
     const personData = { ...person, number : newNumber }
     const UPDATE_PERSON_MSG = `Updated number of ${person.name}`
+    const ERROR_PERSON_MSG = `Information of ${person.name} might have been removed from the server`
 
     personsService
       .updatePerson(pId, personData)
@@ -109,6 +110,11 @@ const App = () => {
         setNewNumber('')
         setMessage(UPDATE_PERSON_MSG)
         setNotificationType('default')
+        setTimeout(() => {setMessage(null)}, TIMEOUT_FREQ)
+      })
+      .catch(error => {
+        setMessage(ERROR_PERSON_MSG)
+        setNotificationType('error')
         setTimeout(() => {setMessage(null)}, TIMEOUT_FREQ)
       })
   }
@@ -132,6 +138,7 @@ const App = () => {
     const personName = event.target.name
     const DELETE_WARNING = `Delete ${personName} ?`
     const DELETE_PERSON_MSG = `Deleted ${personName}`
+    const ERROR_PERSON_MSG = `Information of ${personName} might have been removed from the server`
 
     if (window.confirm(DELETE_WARNING)) {
       personsService
@@ -141,6 +148,11 @@ const App = () => {
           setFilteredPersons(filteredPersons.filter(p => p.name !== personName))
           setMessage(DELETE_PERSON_MSG)
           setNotificationType('default')
+          setTimeout(() => {setMessage(null)}, TIMEOUT_FREQ)
+        })
+        .catch(error => {
+          setMessage(ERROR_PERSON_MSG)
+          setNotificationType('error')
           setTimeout(() => {setMessage(null)}, TIMEOUT_FREQ)
         })
     }
